@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>الفصل 2 — سرعة التفاعلات الكيميائية</title>
+<style>
+:root{
+  --bg:#f0f4f8;--s1:#ffffff;--s2:#f1f5f9;--border:#cbd5e1;
+  --accent:#0284c7;--accent2:#0369a1;
+  --green:#16a34a;--gbg:rgba(22,163,74,0.1);
+  --red:#dc2626;--rbg:rgba(220,38,38,0.07);
+  --yellow:#b45309;--text:#0f172a;--muted:#475569;--r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;flex-direction:column;}
+
+/* HOME */
+#homeScreen{align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 0%,rgba(2,132,199,0.08),transparent 60%),var(--bg);
+  padding:24px;text-align:center;}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(2,132,199,0.1);
+  border:1px solid rgba(2,132,199,0.3);color:var(--accent);font-size:13px;font-weight:700;
+  padding:6px 16px;border-radius:20px;margin-bottom:24px;}
+#homeScreen h1{font-size:clamp(22px,5vw,34px);font-weight:900;line-height:1.3;margin-bottom:10px;}
+#homeScreen h1 span{color:var(--accent);}
+.home-meta{color:var(--muted);font-size:14px;margin-bottom:32px;line-height:1.8;}
+.stats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:36px;}
+.stat{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px 24px;min-width:100px;}
+.stat-n{font-size:28px;font-weight:900;color:var(--accent);}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px;}
+.home-btns{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.btn-p{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:0;
+  padding:15px 40px;border-radius:var(--r);font-size:16px;font-weight:800;cursor:pointer;
+  font-family:inherit;transition:all .2s;box-shadow:0 8px 32px rgba(2,132,199,0.3);}
+.btn-p:hover{transform:translateY(-2px);}
+.btn-s{background:transparent;border:1px solid var(--border);color:var(--muted);
+  padding:12px 28px;border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;}
+.btn-s:hover{color:var(--text);border-color:var(--accent);}
+
+/* SUMMARY */
+#summaryScreen{padding:0;}
+.top-bar{background:var(--s1);border-bottom:1px solid var(--border);padding:14px 20px;
+  position:sticky;top:0;z-index:50;}
+.top-bar-inner{max-width:800px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.top-title{font-size:15px;font-weight:900;color:var(--accent);}
+.btn-go{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:0;
+  padding:9px 22px;border-radius:10px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;}
+.sum-body{padding:24px;max-width:800px;margin:0 auto;width:100%;padding-bottom:80px;}
+.lesson-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);margin-bottom:20px;overflow:hidden;}
+.lesson-head{background:linear-gradient(135deg,rgba(2,132,199,0.09),rgba(56,189,248,0.02));
+  border-bottom:1px solid var(--border);padding:13px 20px;display:flex;align-items:center;gap:10px;}
+.lnum{background:var(--accent);color:#fff;font-size:12px;font-weight:800;padding:3px 10px;border-radius:6px;}
+.ltitle{font-size:15px;font-weight:800;}
+.lesson-body{padding:20px;}
+.def{background:rgba(2,132,199,0.04);border:1px solid rgba(2,132,199,0.2);border-radius:10px;padding:13px 15px;margin-bottom:11px;}
+.def-t{font-size:12px;font-weight:800;color:var(--accent);margin-bottom:4px;}
+.def-d{font-size:14px;font-weight:500;line-height:1.65;}
+.law{background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:13px 15px;margin-bottom:11px;}
+.law-t{font-size:11px;font-weight:800;color:var(--green);margin-bottom:6px;letter-spacing:.5px;}
+.law-f{font-size:15px;font-weight:700;color:#15803d;font-family:monospace;background:rgba(34,197,94,0.08);padding:7px 11px;border-radius:6px;margin-bottom:6px;display:block;}
+.law-n{font-size:13px;color:var(--muted);line-height:1.6;}
+.qa{border-right:3px solid var(--accent);padding-right:11px;margin-bottom:10px;}
+.qa-q{font-size:13px;font-weight:800;color:var(--accent);margin-bottom:3px;}
+.qa-a{font-size:14px;line-height:1.6;}
+.stbl{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:12px;}
+.stbl th{background:rgba(2,132,199,0.08);color:var(--accent);font-weight:800;padding:8px 11px;border:1px solid var(--border);text-align:right;}
+.stbl td{padding:8px 11px;border:1px solid var(--border);line-height:1.5;}
+.stbl tr:nth-child(even) td{background:rgba(0,0,0,0.02);}
+.warn{background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.25);border-radius:10px;padding:12px 15px;margin-bottom:11px;}
+.warn-t{font-size:12px;font-weight:800;color:var(--yellow);margin-bottom:4px;}
+.warn-d{font-size:14px;color:#92400e;line-height:1.6;}
+.sec-t{font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:15px 0 8px;}
+.sum-cta{position:sticky;bottom:0;background:linear-gradient(0deg,var(--bg) 75%,transparent);
+  padding:20px;text-align:center;}
+.sum-cta button{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:0;
+  padding:15px 48px;border-radius:var(--r);font-family:inherit;font-size:16px;font-weight:800;
+  cursor:pointer;box-shadow:0 8px 28px rgba(2,132,199,0.3);}
+
+/* QUIZ */
+#quizScreen{padding:0;}
+.qhdr{background:var(--s1);border-bottom:1px solid var(--border);padding:13px 20px;position:sticky;top:0;z-index:50;}
+.qhdr-in{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.q-ctr{font-size:13px;color:var(--muted);font-weight:700;white-space:nowrap;}
+.pb-w{flex:1;min-width:80px;}.pb-t{height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+.pb-f{height:100%;background:linear-gradient(90deg,var(--accent),#38bdf8);border-radius:3px;transition:width .4s ease;}
+.sc-b{background:rgba(2,132,199,0.1);border:1px solid rgba(2,132,199,0.25);color:var(--accent);
+  font-size:13px;font-weight:800;padding:4px 12px;border-radius:8px;white-space:nowrap;}
+.qbody{flex:1;padding:20px;max-width:720px;margin:0 auto;width:100%;}
+.ql{font-size:11px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.qn{display:inline-block;background:rgba(2,132,199,0.1);border:1px solid rgba(2,132,199,0.25);
+  color:var(--accent);font-size:12px;font-weight:800;padding:3px 10px;border-radius:6px;margin-bottom:12px;}
+.qt{font-size:17px;font-weight:900;line-height:1.65;margin-bottom:20px;color:#0f172a;}
+.opts{display:flex;flex-direction:column;gap:10px;}
+.opt{background:var(--s1);border:1.5px solid var(--border);border-radius:var(--r);padding:14px 16px;
+  cursor:pointer;transition:all .14s;display:flex;align-items:flex-start;gap:12px;text-align:right;}
+.opt:hover:not(.lk){border-color:rgba(56,189,248,0.4);background:rgba(2,132,199,0.04);transform:translateX(-3px);}
+.opt.lk{cursor:default;}
+.ol{width:30px;height:30px;border-radius:7px;flex-shrink:0;background:rgba(100,116,139,0.12);
+  border:1px solid var(--border);color:var(--muted);font-size:12px;font-weight:800;
+  display:grid;place-items:center;transition:all .14s;}
+.opt:hover:not(.lk) .ol{background:rgba(2,132,199,0.1);border-color:rgba(56,189,248,0.4);color:var(--accent);}
+.ot{font-size:15px;font-weight:500;line-height:1.55;padding-top:4px;}
+.opt.cor{background:var(--gbg);border-color:rgba(34,197,94,0.4);}
+.opt.cor .ol{background:rgba(34,197,94,0.15);border-color:rgba(34,197,94,0.5);color:var(--green);}
+.opt.cor .ot{color:var(--green);}
+.opt.wrg{background:var(--rbg);border-color:rgba(239,68,68,0.35);}
+.opt.wrg .ol{background:rgba(239,68,68,0.12);border-color:rgba(239,68,68,0.4);color:var(--red);}
+.opt.wrg .ot{color:var(--red);}
+.fb{margin-top:16px;padding:14px 16px;border-radius:var(--r);font-size:14px;font-weight:500;
+  line-height:1.6;display:none;animation:fi .2s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.fb.ok{display:block;background:var(--gbg);border:1px solid rgba(34,197,94,0.2);color:#15803d;}
+.fb.er{display:block;background:var(--rbg);border:1px solid rgba(239,68,68,0.2);color:#b91c1c;}
+.qnav{display:flex;justify-content:space-between;align-items:center;margin-top:28px;gap:10px;}
+.bn{background:var(--s2);border:1px solid var(--border);color:var(--text);padding:11px 22px;
+  border-radius:10px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;}
+.bn:hover{background:var(--border);border-color:var(--accent);}
+.bn:disabled{opacity:.35;cursor:default;}
+.bnx{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:0;
+  padding:11px 28px;border-radius:10px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;transition:all .15s;}
+.bnx:hover{transform:translateY(-1px);}
+
+/* RESULT */
+#resultScreen{align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 50% 0%,rgba(2,132,199,0.06),transparent 60%),var(--bg);
+  padding:24px;text-align:center;}
+.rc{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:40px 32px;max-width:460px;width:100%;}
+.re{font-size:56px;margin-bottom:16px;}
+.rp{font-size:56px;font-weight:900;line-height:1;}
+.rl{font-size:14px;color:var(--muted);margin:6px 0 20px;}
+.rg{font-size:18px;font-weight:800;padding:8px 24px;border-radius:10px;display:inline-block;margin-bottom:24px;}
+.ga{background:rgba(34,197,94,0.1);color:var(--green);}
+.gb{background:rgba(2,132,199,0.1);color:var(--accent);}
+.gc{background:rgba(245,158,11,0.1);color:var(--yellow);}
+.gd{background:rgba(239,68,68,0.08);color:var(--red);}
+.rs-g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:28px;}
+.rs{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:14px 8px;}
+.rs-n{font-size:22px;font-weight:900;}.rs-l{font-size:11px;color:var(--muted);margin-top:3px;}
+.cn{color:var(--green);}.wn{color:var(--red);}.bn2{color:var(--accent);}
+.rbtns{display:flex;flex-direction:column;gap:10px;}
+.br{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:0;
+  padding:14px;border-radius:var(--r);font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;}
+.bg{background:transparent;border:1px solid var(--border);color:var(--muted);padding:12px;
+  border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .15s;}
+.bg:hover{color:var(--text);border-color:var(--accent);}
+
+/* REVIEW */
+#reviewScreen{padding:0;}
+.rvh{background:var(--s1);border-bottom:1px solid var(--border);padding:13px 20px;position:sticky;top:0;z-index:50;}
+.rvh-in{max-width:740px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.rvt{font-size:15px;font-weight:800;color:var(--yellow);}
+.rvc{font-size:13px;color:var(--muted);}
+.bbk{background:transparent;border:1px solid var(--border);color:var(--muted);padding:7px 14px;
+  border-radius:8px;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;}
+.bbk:hover{color:var(--text);border-color:var(--accent);}
+.rvbody{padding:20px;max-width:740px;margin:0 auto;width:100%;}
+.rvi{background:var(--s1);border:1px solid var(--border);border-right:3px solid var(--red);
+  border-radius:var(--r);padding:20px;margin-bottom:14px;}
+.rvq{font-size:15px;font-weight:700;margin-bottom:14px;line-height:1.6;}
+.rvo{display:flex;flex-direction:column;gap:7px;margin-bottom:12px;}
+.rvop{padding:10px 14px;border-radius:9px;font-size:14px;border:1px solid var(--border);background:var(--s2);display:flex;align-items:center;gap:8px;}
+.rvop.rc2{background:var(--gbg);border-color:rgba(34,197,94,0.3);color:#15803d;}
+.rvop.rw2{background:var(--rbg);border-color:rgba(239,68,68,0.25);color:#b91c1c;}
+.rvfb{font-size:13px;color:#1d4ed8;background:rgba(2,132,199,0.05);border:1px solid rgba(2,132,199,0.2);padding:10px 14px;border-radius:8px;line-height:1.6;}
+.emp{text-align:center;padding:60px 20px;color:var(--muted);font-size:15px;}
+.emp .big{font-size:48px;margin-bottom:12px;}
+@media(max-width:600px){.qt{font-size:15px;}.ot{font-size:14px;}.rp{font-size:44px;}.rc{padding:28px 20px;}.stbl{font-size:12px;}}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="homeScreen" class="screen active">
+  <div class="badge">⚗️ كيمياء · ثاني ثانوي</div>
+  <h1>الفصل الثاني<br><span>سرعة التفاعلات الكيميائية</span></h1>
+  <div class="home-meta">أ. سعود الشلوي &nbsp;·&nbsp; 50 سؤالاً &nbsp;·&nbsp; تغذية راجعة فورية</div>
+  <div class="stats">
+    <div class="stat"><div class="stat-n">50</div><div class="stat-l">سؤال</div></div>
+    <div class="stat"><div class="stat-n" id="stPrev">—</div><div class="stat-l">آخر نتيجة</div></div>
+    <div class="stat"><div class="stat-n" id="stWrong">0</div><div class="stat-l">للمراجعة</div></div>
+  </div>
+  <div class="home-btns">
+    <button class="btn-p" id="btnSum">📖 اقرأ الملخص أولاً</button>
+    <button class="btn-s" id="btnDirect">ابدأ الاختبار مباشرة ←</button>
+    <button class="btn-s" id="btnRevHome" style="display:none">مراجعة الأخطاء السابقة 📋</button>
+  </div>
+</div>
+
+<!-- SUMMARY -->
+<div id="summaryScreen" class="screen">
+  <div class="top-bar">
+    <div class="top-bar-inner">
+      <div class="top-title">📖 ملخص الفصل الثاني</div>
+      <button class="btn-go" id="btnGoQ1">ابدأ الاختبار ←</button>
+    </div>
+  </div>
+  <div class="sum-body">
+
+    <div class="lesson-card">
+      <div class="lesson-head"><span class="lnum">2-1</span><span class="ltitle">نظرية التصادم وسرعة التفاعل</span></div>
+      <div class="lesson-body">
+        <div class="sec-t">📌 التعاريف</div>
+        <div class="def"><div class="def-t">سرعة التفاعل الكيميائي</div><div class="def-d">التغير في تركيز المواد المتفاعلة أو الناتجة في وحدة الزمن. وحدتها: <strong>mol/L·s</strong></div></div>
+        <div class="law"><div class="law-t">⚗️ قانون السرعة</div><code class="law-f">Rate = −Δ[متفاعل] / Δt = +Δ[ناتج] / Δt</code><div class="law-n">الإشارة (−) للمتفاعلات لأن تركيزها يتناقص. السرعة دائماً موجبة.</div></div>
+        <div class="def"><div class="def-t">نظرية التصادم</div><div class="def-d">لكي يحدث التفاعل يجب تصادم الجسيمات بـ <strong>اتجاه مناسب</strong> وبـ <strong>طاقة ≥ طاقة التنشيط (Ea)</strong>.</div></div>
+        <div class="def"><div class="def-t">طاقة التنشيط (Ea)</div><div class="def-d">أقل كمية طاقة لبدء التفاعل. كلما <strong>قلّت Ea ← زادت السرعة</strong>. لا تتغير إلا بوجود محفز.</div></div>
+        <div class="def"><div class="def-t">المعقد المنشط</div><div class="def-d">حالة وسيطة <strong>غير مستقرة</strong> عالية الطاقة. يقع عند <strong>قمة منحنى الطاقة</strong>. لا يمكن عزله.</div></div>
+        <div class="sec-t">❓ تعاليل</div>
+        <div class="qa"><div class="qa-q">س: لماذا لا يؤدي كل تصادم إلى تفاعل؟</div><div class="qa-a">ج: كثير من التصادمات إما بطاقة أقل من Ea أو باتجاه غير مناسب.</div></div>
+        <div class="qa"><div class="qa-q">س: في تفاعل ماص، أي طاقة تنشيط أكبر: الأمامي أم العكسي؟</div><div class="qa-a">ج: العكسي أكبر — لأن النواتج أعلى طاقة.</div></div>
+      </div>
+    </div>
+
+    <div class="lesson-card">
+      <div class="lesson-head"><span class="lnum">2-2</span><span class="ltitle">العوامل المؤثرة في سرعة التفاعل</span></div>
+      <div class="lesson-body">
+        <table class="stbl">
+          <tr><th>العامل</th><th>التأثير</th><th>السبب</th></tr>
+          <tr><td>طبيعة المادة</td><td>سرعات مختلفة</td><td>تركيب إلكتروني وروابط مختلفة</td></tr>
+          <tr><td>↑ التركيز</td><td>↑ السرعة</td><td>جسيمات أكثر → تصادمات أكثر</td></tr>
+          <tr><td>↑ مساحة السطح</td><td>↑ السرعة</td><td>للمواد الصلبة فقط</td></tr>
+          <tr><td>↑ درجة الحرارة</td><td>↑↑ السرعة</td><td>↑ طاقة حركية + ↑ تصادمات فوق Ea</td></tr>
+          <tr><td>المحفز</td><td>↑ السرعة</td><td>يخفض Ea — لا يُستهلك — لا يغير ΔH</td></tr>
+          <tr><td>المثبط</td><td>↓ السرعة</td><td>يعيق التصادمات الفعالة</td></tr>
+        </table>
+        <div class="law"><div class="law-t">📐 قاعدة درجة الحرارة التقريبية</div><code class="law-f">زيادة 10K ≈ تضاعف سرعة التفاعل</code></div>
+        <div class="qa"><div class="qa-q">س: هل يغير المحفز قيمة ΔH؟</div><div class="qa-a">ج: لا — يؤثر على Ea فقط.</div></div>
+      </div>
+    </div>
+
+    <div class="lesson-card">
+      <div class="lesson-head"><span class="lnum">2-3</span><span class="ltitle">قوانين سرعة التفاعل</span></div>
+      <div class="lesson-body">
+        <div class="law"><div class="law-t">📐 قانون السرعة</div><code class="law-f">Rate = k [A]^m [B]^n</code><div class="law-n">k = ثابت السرعة (يتغير فقط بدرجة الحرارة) | m,n = رتب التفاعل (تُحدد تجريبياً)</div></div>
+        <div class="sec-t">📌 جدول رتبة التفاعل</div>
+        <table class="stbl">
+          <tr><th>تضاعف التركيز</th><th>تغير السرعة</th><th>الرتبة</th></tr>
+          <tr><td>×2</td><td>×1 (لا تتغير)</td><td><strong>صفر</strong></td></tr>
+          <tr><td>×2</td><td>×2</td><td><strong>أولى</strong></td></tr>
+          <tr><td>×2</td><td>×4</td><td><strong>ثانية</strong></td></tr>
+          <tr><td>×2</td><td>×8</td><td><strong>ثالثة</strong></td></tr>
+        </table>
+        <div class="sec-t">📌 وحدات k</div>
+        <table class="stbl">
+          <tr><th>الرتبة الكلية</th><th>وحدة k</th></tr>
+          <tr><td>صفر</td><td>mol/L·s</td></tr>
+          <tr><td>أولى</td><td>s⁻¹</td></tr>
+          <tr><td>ثانية</td><td>L/mol·s</td></tr>
+          <tr><td>ثالثة</td><td>L²/mol²·s</td></tr>
+        </table>
+        <div class="warn"><div class="warn-t">⚠️ تنبيه مهم</div><div class="warn-d">رتب التفاعل <strong>لا تُستنتج</strong> من معاملات المعادلة الموزونة — بل تُحدد <strong>تجريبياً فقط</strong>.</div></div>
+        <div class="qa"><div class="qa-q">س: متى يتغير k؟</div><div class="qa-a">ج: فقط عند تغير درجة الحرارة.</div></div>
+        <div class="qa"><div class="qa-q">س: ماذا تعني قيمة k الكبيرة؟</div><div class="qa-a">ج: التفاعل سريع.</div></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="sum-cta"><button id="btnGoQ2">✅ انتهيت — ابدأ الاختبار ←</button></div>
+</div>
+
+<!-- QUIZ -->
+<div id="quizScreen" class="screen">
+  <div class="qhdr"><div class="qhdr-in">
+    <div class="q-ctr" id="qCtr">1/50</div>
+    <div class="pb-w"><div class="pb-t"><div class="pb-f" id="pbF"></div></div></div>
+    <div class="sc-b" id="scB">0 ✓</div>
+  </div></div>
+  <div class="qbody" id="qbody"></div>
+</div>
+
+<!-- RESULT -->
+<div id="resultScreen" class="screen">
+  <div class="rc">
+    <div class="re" id="rE">🎯</div>
+    <div class="rp" id="rP">0%</div>
+    <div class="rl">من أصل 50 سؤالاً</div>
+    <div class="rg" id="rG"></div>
+    <div class="rs-g">
+      <div class="rs"><div class="rs-n cn" id="rC">0</div><div class="rs-l">صحيح</div></div>
+      <div class="rs"><div class="rs-n wn" id="rW">0</div><div class="rs-l">خطأ</div></div>
+      <div class="rs"><div class="rs-n bn2" id="rS">0</div><div class="rs-l">غير محلول</div></div>
+    </div>
+    <div class="rbtns">
+      <button class="br" id="btnRetry">إعادة الاختبار 🔄</button>
+      <button class="bg" id="btnRevErr">مراجعة الأخطاء 📋</button>
+      <button class="bg" id="btnHome">الرئيسية 🏠</button>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEW -->
+<div id="reviewScreen" class="screen">
+  <div class="rvh"><div class="rvh-in">
+    <div><div class="rvt">📋 مراجعة الأخطاء</div><div class="rvc" id="rvC"></div></div>
+    <button class="bbk" id="btnBk">← رجوع</button>
+  </div></div>
+  <div class="rvbody" id="rvbody"></div>
+</div>
+
+<script>
+const Q=[
+  {id:1,l:"2-1",q:"ما تعريف سرعة التفاعل الكيميائي؟",o:["كمية المادة الناتجة في نهاية التفاعل","التغير في تركيز المواد المتفاعلة أو الناتجة في وحدة الزمن","الطاقة اللازمة لبدء التفاعل","عدد التصادمات بين جسيمات المتفاعلات"],a:1,f:"السرعة = Δتركيز / Δزمن، وحدتها mol/L·s."},
+  {id:2,l:"2-1",q:"ما وحدة سرعة التفاعل الكيميائي؟",o:["mol/L","kJ/mol","mol/L·s","L/mol"],a:2,f:"تركيز (mol/L) ÷ زمن (s) = mol/L·s."},
+  {id:3,l:"2-1",q:"لماذا تُكتب إشارة سالبة أمام تغير تركيز المتفاعلات في قانون السرعة؟",o:["لأن التفاعل طارد للحرارة","لأن تركيز المتفاعلات يتناقص والإشارة السالبة تجعل السرعة موجبة","لأن الضغط يتناقص","لأن درجة الحرارة ترتفع"],a:1,f:"السرعة يجب أن تكون موجبة دائماً."},
+  {id:4,l:"2-1",q:"في التفاعل A→B، إذا زاد تركيز B من 0 إلى 0.050M خلال 5s. ما سرعة التفاعل؟",o:["0.050 mol/L·s","0.25 mol/L·s","0.010 mol/L·s","5.0 mol/L·s"],a:2,f:"Rate = 0.050/5 = 0.010 mol/L·s."},
+  {id:5,l:"2-1",q:"ما الشرط الأول للتصادم الفعال وفق نظرية التصادم؟",o:["أن تكون المادة صلبة","الاتجاه المناسب للتصادم","درجة الحرارة المرتفعة","التركيز العالي"],a:1,f:"الشرطان: الاتجاه المناسب + الطاقة الكافية."},
+  {id:6,l:"2-1",q:"ما الشرط الثاني للتصادم الفعال؟",o:["الضغط العالي","وجود محفز","امتلاك الجسيمات طاقة ≥ طاقة التنشيط","التركيز المنخفض"],a:2,f:"الطاقة يجب أن تساوي أو تتجاوز Ea."},
+  {id:7,l:"2-1",q:"ما تعريف طاقة التنشيط (Ea)؟",o:["الطاقة المنطلقة من التفاعل","أقل كمية من الطاقة اللازمة لبدء التفاعل","طاقة الرابطة الكيميائية","الطاقة الكلية للمتفاعلات"],a:1,f:"Ea هي الحد الأدنى لبدء التفاعل."},
+  {id:8,l:"2-1",q:"ما العلاقة بين طاقة التنشيط وسرعة التفاعل؟",o:["كلما زادت Ea زادت السرعة","لا علاقة بينهما","كلما قلت Ea زادت السرعة","كلما زادت Ea زادت كمية الناتج"],a:2,f:"Ea أقل → جسيمات أكثر تملك الطاقة الكافية → سرعة أعلى."},
+  {id:9,l:"2-1",q:"ما المعقد المنشط؟",o:["المادة الناتجة النهائية","المحفز المستخدم","حالة وسيطة غير مستقرة عالية الطاقة تتكون أثناء التصادم الفعال","المتفاعل الأول"],a:2,f:"المعقد المنشط حالة انتقالية في قمة منحنى الطاقة."},
+  {id:10,l:"2-1",q:"أين يقع المعقد المنشط على مخطط طاقة التفاعل؟",o:["عند طاقة المتفاعلات","عند طاقة النواتج","عند أدنى نقطة","عند قمة المنحنى (أعلى نقطة)"],a:3,f:"المعقد المنشط يقع عند أعلى طاقة في المسار."},
+  {id:11,l:"2-1",q:"أي من التالي خاصية للمعقد المنشط؟",o:["مستقر ويمكن عزله","غير مستقر ولا يمكن عزله","طاقته أقل من طاقة المتفاعلات","يساوي طاقة المنتجات دائماً"],a:1,f:"المعقد المنشط غير مستقر وعمره قصير جداً."},
+  {id:12,l:"2-1",q:"في تفاعل ماص للحرارة، أي طاقة تنشيط أكبر؟",o:["طاقة تنشيط التفاعل الأمامي","طاقة تنشيط التفاعل العكسي","كلتاهما متساويتان","لا توجد طاقة تنشيط"],a:1,f:"في التفاعل الماص، النواتج أعلى طاقة → Ea عكسي > Ea أمامي. ملاحظة: في السؤال المقصود الإجابة الثانية (العكسي أكبر)."},
+  {id:13,l:"2-2",q:"ما العامل الذي يجعل الخارصين يتفاعل مع نترات الفضة أسرع من النحاس؟",o:["التركيز","درجة الحرارة","طبيعة المادة المتفاعلة","مساحة السطح"],a:2,f:"طبيعة المادة تحدد السرعة الأساسية."},
+  {id:14,l:"2-2",q:"كيف تؤثر زيادة التركيز في سرعة التفاعل؟",o:["تقلل السرعة","تزيد السرعة لأنها تزيد عدد التصادمات","لا تؤثر","تزيد طاقة التنشيط"],a:1,f:"تركيز أعلى → جسيمات أكثر → تصادمات أكثر."},
+  {id:15,l:"2-2",q:"لماذا تزيد مساحة السطح من سرعة التفاعل؟",o:["لأنها تزيد طاقة التنشيط","لأنها تخفض درجة الحرارة","لأنها تعرض جسيمات أكثر للتصادم","لأنها تزيد التركيز"],a:2,f:"المادة المجزأة تعرض سطحاً أكبر للتفاعل."},
+  {id:16,l:"2-2",q:"لأي نوع المواد يُعدّ تأثير مساحة السطح مهماً؟",o:["الغازات فقط","السوائل فقط","المواد الصلبة","جميع الحالات بالتساوي"],a:2,f:"مساحة السطح مفهوم أساسي للمواد الصلبة."},
+  {id:17,l:"2-2",q:"لماذا تزيد درجة الحرارة سرعة التفاعل بشكل كبير؟",o:["لأنها تزيد التركيز","لأنها تزيد الطاقة الحركية وتزيد نسبة الجسيمات التي تمتلك طاقة ≥ Ea","لأنها تقلل مساحة السطح","لأنها تزيد طاقة التنشيط"],a:1,f:"التأثير مزدوج: زيادة التصادمات + زيادة التصادمات الفعالة."},
+  {id:18,l:"2-2",q:"وفق القاعدة التقريبية، ماذا يحدث للسرعة عند زيادة درجة الحرارة 10K؟",o:["تتضاعف تقريباً","تنخفض للنصف","لا تتغير","تتضاعف 4 مرات"],a:0,f:"+10K ≈ ضعف السرعة."},
+  {id:19,l:"2-2",q:"ما تعريف المحفز؟",o:["مادة تبطئ التفاعل","مادة تزيد السرعة وتُستهلك فيه","مادة تزيد السرعة دون أن تُستهلك نهائياً","مادة تمتص الحرارة"],a:2,f:"المحفز لا يُستهلك نهائياً."},
+  {id:20,l:"2-2",q:"كيف يعمل المحفز على زيادة سرعة التفاعل؟",o:["يزيد تركيز المتفاعلات","يرفع درجة الحرارة","يخفض طاقة التنشيط بتوفير مسار بديل بطاقة أقل","يزيد مساحة السطح"],a:2,f:"المحفز يخفض Ea ولا يغير ΔH."},
+  {id:21,l:"2-2",q:"ما تعريف المثبط؟",o:["مادة تزيد السرعة","مادة تقلل سرعة التفاعل","مادة تزيد Ea وتزيد السرعة","نوع من المحفزات"],a:1,f:"المثبط يقلل السرعة."},
+  {id:22,l:"2-2",q:"ما الفرق الجوهري بين المحفز والمثبط؟",o:["المحفز يزيد ΔH، المثبط يقلله","المحفز يزيد السرعة بخفض Ea، المثبط يقلل السرعة","المحفز صلب دائماً، المثبط غاز","لا فرق"],a:1,f:"المحفز ↑ سرعة، المثبط ↓ سرعة."},
+  {id:23,l:"2-2",q:"أي من التالي ليس عاملاً مؤثراً في سرعة التفاعل؟",o:["التركيز","لون المادة المتفاعلة","درجة الحرارة","مساحة السطح"],a:1,f:"اللون لا علاقة له بسرعة التفاعل."},
+  {id:24,l:"2-3",q:"ما قانون سرعة التفاعل للمعادلة aA + bB → نواتج؟",o:["Rate = k[A]+[B]","Rate = k[A]^m[B]^n","Rate = k/([A][B])","Rate = [A]^m+[B]^n"],a:1,f:"الصيغة الصحيحة: Rate = k[A]^m[B]^n."},
+  {id:25,l:"2-3",q:"ما تعريف رتبة التفاعل بالنسبة لمادة معينة؟",o:["المعامل أمام المادة في المعادلة الموزونة","الأس الذي يُرفع إليه تركيز هذه المادة في قانون السرعة","تركيز المادة الابتدائي","نسبة السرعة إلى التركيز"],a:1,f:"الرتبة = الأس في قانون السرعة."},
+  {id:26,l:"2-3",q:"ما الرتبة الكلية للتفاعل: Rate = k[A]²[B]¹؟",o:["1","2","3","4"],a:2,f:"2+1=3."},
+  {id:27,l:"2-3",q:"ما الرتبة الكلية للتفاعل: Rate = k[A]²[B]²؟",o:["2","4","0","1"],a:1,f:"2+2=4."},
+  {id:28,l:"2-3",q:"إذا تضاعف تركيز A وبقيت السرعة ثابتة، فما رتبة التفاعل بالنسبة لـ A؟",o:["الأولى","الثانية","صفر","الثالثة"],a:2,f:"بقاء السرعة رغم تضاعف التركيز = رتبة صفر."},
+  {id:29,l:"2-3",q:"ما ثابت سرعة التفاعل (k)؟",o:["التركيز الابتدائي","ثابت التناسب الذي يربط السرعة بتراكيز المواد في قانون السرعة","طاقة التنشيط","معامل المادة في المعادلة"],a:1,f:"k هو ثابت التناسب في قانون السرعة."},
+  {id:30,l:"2-3",q:"متى يتغير ثابت سرعة التفاعل k؟",o:["عند تغيير التركيز","عند تغيير درجة الحرارة","عند إضافة كمية أكبر من المتفاعلات","عند تغيير حجم الإناء"],a:1,f:"k يعتمد على درجة الحرارة فقط."},
+  {id:31,l:"2-3",q:"ما دلالة قيمة k الكبيرة؟",o:["التفاعل بطيء","Ea كبيرة","التفاعل سريع","التركيز عالٍ"],a:2,f:"k كبير = تفاعل سريع."},
+  {id:32,l:"2-3",q:"ما وحدة k للتفاعل من الرتبة الأولى؟",o:["mol/L·s","L/mol·s","s⁻¹","L²/mol²·s"],a:2,f:"الرتبة الأولى → k بوحدة s⁻¹."},
+  {id:33,l:"2-3",q:"كيف تحدد رتبة التفاعل تجريبياً؟",o:["من معاملات المعادلة الموزونة","بمقارنة السرعات الابتدائية مع تغيير تركيز مادة واحدة في كل تجربة","من قيمة ΔH","من طاقة التنشيط"],a:1,f:"الطريقة الوحيدة: تجريبياً بمقارنة السرعات الابتدائية."},
+  {id:34,l:"2-3",q:"[A]=0.100M → Rate=2×10⁻³، [A]=0.200M → Rate=2×10⁻³. ما رتبة التفاعل بالنسبة لـ A؟",o:["الأولى","الثانية","صفر","الثالثة"],a:2,f:"تضاعف [A] والسرعة لم تتغير → رتبة صفر."},
+  {id:35,l:"2-3",q:"[B]=0.100M → Rate=2×10⁻³، [B]=0.200M → Rate=4×10⁻³. ما رتبة التفاعل بالنسبة لـ B؟",o:["صفر","الأولى","الثانية","الثالثة"],a:1,f:"تضاعف [B] وتضاعفت السرعة → رتبة أولى."},
+  {id:36,l:"2-3",q:"Rate=k[B]، [B]=0.100M، Rate=2×10⁻³ mol/L·s. ما قيمة k؟",o:["0.0020 s⁻¹","0.020 s⁻¹","0.20 s⁻¹","2.0 s⁻¹"],a:1,f:"k=Rate/[B]=2×10⁻³/0.100=0.020 s⁻¹."},
+  {id:37,l:"2-3",q:"2NO(g)+O₂(g)→2NO₂(g)، رتبة O₂=1، الرتبة الكلية=3. ما قانون السرعة؟",o:["Rate=k[NO][O₂]","Rate=k[NO]²[O₂]","Rate=k[O₂]²[NO]","Rate=k[NO]³"],a:1,f:"رتبة NO=3−1=2 → Rate=k[NO]²[O₂]."},
+  {id:38,l:"2-3",q:"ما معنى أن قانون سرعة التفاعل يعطي متوسط السرعة؟",o:["السرعة ثابتة طوال التفاعل","السرعة تقاس في نقطة وسط التفاعل","السرعة تتغير باستمرار وهذا القانون يعطي قيمة وسطية","السرعة لا يمكن حسابها"],a:2,f:"السرعة تتناقص مع الزمن وليست ثابتة."},
+  {id:39,l:"2-1",q:"[C₄H₉Cl] انخفض من 0.220M إلى 0.100M خلال 4.00s. ما متوسط سرعة التفاعل؟",o:["0.120 mol/L·s","0.0300 mol/L·s","0.0550 mol/L·s","0.0250 mol/L·s"],a:1,f:"Rate=−(0.100−0.220)/4.00=0.0300 mol/L·s."},
+  {id:40,l:"2-3",q:"R=k[CH₃CHO]²، [CH₃CHO]=2.00×10⁻³M، Rate=2.70×10⁻¹¹mol/L·s. ما k؟",o:["6.75×10⁻⁶ L/mol·s","6.75×10⁻³ L/mol·s","1.35×10⁻⁵ L/mol·s","2.70×10⁻⁸ L/mol·s"],a:0,f:"k=2.70×10⁻¹¹/(2.00×10⁻³)²=6.75×10⁻⁶ L/mol·s."},
+  {id:41,l:"2-3",q:"k=6.75×10⁻⁶ L/mol·s، R=k[CH₃CHO]²، [CH₃CHO]=8.00×10⁻³M. ما السرعة؟",o:["4.32×10⁻¹⁰ mol/L·s","5.40×10⁻⁸ mol/L·s","3.24×10⁻¹² mol/L·s","2.70×10⁻¹¹ mol/L·s"],a:0,f:"R=6.75×10⁻⁶×(8.00×10⁻³)²=4.32×10⁻¹⁰ mol/L·s."},
+  {id:42,l:"2-3",q:"اكتب قانون سرعة aA→bB إذا كانت رتبة A هي الثالثة.",o:["R=k[A]","R=k[A]²","R=k[A]³","R=k/[A]³"],a:2,f:"رتبة ثالثة → الأس=3."},
+  {id:43,l:"2-1",q:"أي العبارات حول سرعة التفاعل خاطئة؟",o:["وحدتها mol/L·s","تتناقص مع الزمن","ثابتة طوال مدة التفاعل","ترتبط بتغير تركيز المتفاعلات أو النواتج"],a:2,f:"السرعة تتناقص مع الزمن."},
+  {id:44,l:"2-1",q:"أي الوحدات لا تستخدم للتعبير عن سرعة التفاعل؟",o:["M/min","L/s","mol/mL·h","mol/L·min"],a:1,f:"L/s وحدة حجم/زمن لا تركيز/زمن."},
+  {id:45,l:"2-2",q:"أيها صحيحة: (1) العوامل: طبيعة المادة، التركيز، مساحة السطح، الحرارة، المحفزات. (2) المحفزات تزيد السرعة بزيادة Ea. (3) يجب تصادم الجسيمات.",o:["الأولى والثانية","الثانية والثالثة","الأولى والثالثة","الثلاثة جميعها"],a:2,f:"العبارة 2 خاطئة: المحفز يخفض Ea لا يزيدها."},
+  {id:46,l:"2-1",q:"ماذا يمثل الفرق بين طاقة المعقد المنشط وطاقة المتفاعلات في مخطط الطاقة؟",o:["ΔH للتفاعل","طاقة تنشيط التفاعل الأمامي","طاقة تنشيط التفاعل العكسي","الطاقة الحرارية المنطلقة"],a:1,f:"Ea أمامي = طاقة المعقد − طاقة المتفاعلات."},
+  {id:47,l:"2-1",q:"لماذا تتناقص سرعة التفاعل مع مرور الزمن؟",o:["لأن درجة الحرارة تنخفض","لأن تركيز المتفاعلات يتناقص","لأن المحفز يستهلك","لأن Ea ترتفع"],a:1,f:"تركيز أقل → تصادمات أقل → سرعة أقل."},
+  {id:48,l:"2-3",q:"في تجربة لتحديد قانون السرعة، ما الخطوة الأساسية؟",o:["تغيير جميع التراكيز معاً","تغيير تركيز مادة واحدة في كل تجربة مع تثبيت البقية","قياس درجة الحرارة فقط","حساب ΔH"],a:1,f:"طريقة المقارنة: تغيير متغير واحد في كل مرة."},
+  {id:49,l:"2-3",q:"إذا كان Rate=k[A]⁰[B]¹، ما قانون السرعة المبسط؟",o:["Rate=k[A][B]","Rate=k[B]","Rate=k[A]","Rate=k"],a:1,f:"[A]⁰=1 → Rate=k[B]."},
+  {id:50,l:"2-3",q:"Rate=k[A]²[B]، الرتبة الكلية=3. ما وحدة k؟",o:["s⁻¹","mol/L·s","L²/mol²·s","L/mol·s"],a:2,f:"الرتبة الكلية 3 → L²/mol²·s."}
+];
+
+const LN={'2-1':'الدرس 2-1','2-2':'الدرس 2-2','2-3':'الدرس 2-3'};
+const T=Q.length;
+const SK='ch2_sc',WK='ch2_wr';
+let ord=[],cur=0,ans={},sc=0,wi=[];
+
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');}
+function shuf(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=0|Math.random()*(i+1);[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function initHome(){
+  const s=localStorage.getItem(SK);
+  if(s!=null)$('stPrev').textContent=Math.round(parseInt(s)/T*100)+'%';
+  const w=localStorage.getItem(WK);
+  if(w){const a=JSON.parse(w);$('stWrong').textContent=a.length;$('btnRevHome').style.display=a.length>0?'inline-block':'none';}
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  initHome();
+  $('btnSum').onclick=()=>show('summaryScreen');
+  $('btnDirect').onclick=startQuiz;
+  $('btnRevHome').onclick=openReview;
+  $('btnGoQ1').onclick=startQuiz;
+  $('btnGoQ2').onclick=startQuiz;
+  $('btnRetry').onclick=()=>{reset();startQuiz();};
+  $('btnRevErr').onclick=openReview;
+  $('btnHome').onclick=()=>{show('homeScreen');initHome();};
+  $('btnBk').onclick=()=>show('homeScreen');
+});
+
+function reset(){ord=[];cur=0;ans={};sc=0;wi=[];}
+
+function startQuiz(){
+  reset();
+  ord=shuf(Q.map((_,i)=>i));
+  show('quizScreen');
+  renderQ();
+}
+
+function renderQ(){
+  const q=Q[ord[cur]];
+  $('qCtr').textContent=`${cur+1} / ${T}`;
+  $('pbF').style.width=`${Math.round(cur/T*100)}%`;
+  $('scB').textContent=`${sc} ✓`;
+  const done=ans.hasOwnProperty(q.id);
+  $('qbody').innerHTML=`
+    <div class="ql">${LN[q.l]||q.l}</div>
+    <div class="qn">س ${cur+1}</div>
+    <div class="qt">${q.q}</div>
+    <div class="opts">
+      ${q.o.map((o,i)=>`
+        <div class="opt${done?' lk':''}" data-i="${i}">
+          <div class="ol">${String.fromCharCode(65+i)}</div>
+          <div class="ot">${o}</div>
+        </div>`).join('')}
+    </div>
+    <div class="fb" id="fb"></div>
+    <div class="qnav">
+      <button class="bn" id="bP" ${cur===0?'disabled':''}>← السابق</button>
+      <button class="bnx" id="bN">${cur===T-1?'النتيجة ←':'التالي →'}</button>
+    </div>`;
+
+  if(done){applyUI(q,ans[q.id]);}
+  else{
+    document.querySelectorAll('.opt').forEach(el=>{
+      el.addEventListener('click',()=>{
+        if(el.classList.contains('lk'))return;
+        document.querySelectorAll('.opt').forEach(o=>o.classList.add('lk'));
+        const ch=parseInt(el.dataset.i);
+        if(ch===q.a)sc++;else wi.push(q.id);
+        ans[q.id]=ch;
+        applyUI(q,ch);
+        $('scB').textContent=`${sc} ✓`;
+      });
+    });
+  }
+  $('bP').onclick=()=>{if(cur>0){cur--;renderQ();}};
+  $('bN').onclick=()=>{if(cur<T-1){cur++;renderQ();}else{finish();}};
+}
+
+function applyUI(q,ch){
+  document.querySelectorAll('.opt').forEach(el=>{
+    el.classList.add('lk');
+    const i=parseInt(el.dataset.i);
+    if(i===q.a)el.classList.add('cor');
+    if(i===ch&&ch!==q.a)el.classList.add('wrg');
+  });
+  const fb=$('fb');
+  if(ch===q.a){fb.className='fb ok';fb.innerHTML='✅ إجابة صحيحة! '+q.f;}
+  else{fb.className='fb er';fb.innerHTML=`❌ خطأ. الإجابة الصحيحة: <strong>${String.fromCharCode(65+q.a)}</strong>. ${q.f}`;}
+}
+
+function finish(){
+  const pct=Math.round(sc/T*100);
+  localStorage.setItem(SK,sc);
+  localStorage.setItem(WK,JSON.stringify([...new Set(wi)]));
+  $('rP').textContent=pct+'%';
+  $('rC').textContent=sc;
+  $('rW').textContent=wi.length;
+  $('rS').textContent=T-Object.keys(ans).length;
+  let e,g,c;
+  if(pct>=90){e='🏆';g='ممتاز';c='ga';}
+  else if(pct>=75){e='🎯';g='جيد جداً';c='gb';}
+  else if(pct>=60){e='👍';g='مقبول';c='gc';}
+  else{e='📚';g='راجع الدرس';c='gd';}
+  $('rE').textContent=e;
+  const rg=$('rG');rg.textContent=g;rg.className='rg '+c;
+  show('resultScreen');
+}
+
+function openReview(){
+  const w=localStorage.getItem(WK);
+  const ids=w?JSON.parse(w):[];
+  $('rvC').textContent=ids.length?`${ids.length} سؤال`:'';
+  if(!ids.length){$('rvbody').innerHTML='<div class="emp"><div class="big">🎉</div>لا أخطاء — ممتاز!</div>';show('reviewScreen');return;}
+  $('rvbody').innerHTML=Q.filter(q=>ids.includes(q.id)).map(q=>`
+    <div class="rvi">
+      <div class="rvq">${q.q}</div>
+      <div class="rvo">${q.o.map((o,i)=>`<div class="rvop ${i===q.a?'rc2':''}">${String.fromCharCode(65+i)}. ${o}${i===q.a?' ✓':''}</div>`).join('')}</div>
+      <div class="rvfb">💡 ${q.f}</div>
+    </div>`).join('');
+  show('reviewScreen');
+}
+</script>
+</body>
+</html>
